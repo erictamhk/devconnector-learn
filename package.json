@@ -1,0 +1,19 @@
+{
+  "name": "devconnector-learn",
+  "version": "1.0.0",
+  "description": "Social network for developers",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erictamhk/devconnector-learn.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erictamhk/devconnector-learn/issues"
+  },
+  "homepage": "https://github.com/erictamhk/devconnector-learn#readme"
+}
