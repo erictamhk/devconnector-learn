@@ -99,7 +99,11 @@ router.get(
   (req, res) => {
     console.log("success passport authenticate");
     console.log(req);
-    res.json({ msg: "Success" });
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    });
   }
 );
 
