@@ -118,8 +118,8 @@ router.get(
   "/current",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    console.log("success passport authenticate");
-    console.log(req);
+    //console.log("success passport authenticate");
+    //console.log(req);
     res.json({
       id: req.user.id,
       name: req.user.name,
