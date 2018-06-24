@@ -48,12 +48,11 @@ const ProfileSchema = new Schema({
   ],
   education: [
     {
-      title: { type: String, required: true },
+      school: { type: String, required: true },
       degree: { type: String, required: true },
-      fieldofstudy: { type: String },
+      fieldofstudy: { type: String, required: true },
       from: { type: Date, required: true },
-      to: { type: Date, required: true },
-      current: { type: Boolean, default: false },
+      to: { type: Date },
       description: { type: String }
     }
   ],
