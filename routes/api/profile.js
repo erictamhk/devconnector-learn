@@ -34,11 +34,34 @@ router.get(
         }
         res.json(profile);
       })
-      .catch(err =>
-        res.status(404).json({ msg: "error", errors: err, isValid: false })
-      );
+      .catch(err => {
+        errors.noprofile = "There is no profile for this user";
+        console.log(err);
+        res.status(404).json({ msg: "error", errors, isValid: false });
+      });
   }
 );
+
+// @route   GET api/profile/all
+// @desc    Get all profile
+// @access  Public
+router.get("/all", (req, res) => {
+  const errors = {};
+  Profile.find()
+    .populate("user", ["name", "avatar"])
+    .then(profiles => {
+      if (!profiles) {
+        errors.noprofile = "There are no profiles";
+        return res.status(404).json({ msg: "error", errors, isValid: false });
+      }
+      res.json(profiles);
+    })
+    .catch(err => {
+      errors.noprofile = "There are no profiles";
+      console.log(err);
+      res.status(404).json({ msg: "error", errors, isValid: false });
+    });
+});
 
 // @route   GET api/profile/handle/:handle
 // @desc    Get profile by handle
@@ -54,9 +77,32 @@ router.get("/handle/:handle", (req, res) => {
       }
       res.json(profile);
     })
-    .catch(err =>
-      res.status(404).json({ msg: "error", errors: err, isValid: false })
-    );
+    .catch(err => {
+      errors.noprofile = "There is no profile for this user";
+      console.log(err);
+      res.status(404).json({ msg: "error", errors, isValid: false });
+    });
+});
+
+// @route   GET api/profile/user/:user_id
+// @desc    Get profile by user ID
+// @access  Public
+router.get("/user/:user_id", (req, res) => {
+  const errors = {};
+  Profile.findOne({ user: req.params.user_id })
+    .populate("user", ["name", "avatar"])
+    .then(profile => {
+      if (!profile) {
+        errors.noprofile = "There is no profile for this user";
+        return res.status(404).json({ msg: "error", errors, isValid: false });
+      }
+      res.json(profile);
+    })
+    .catch(err => {
+      errors.noprofile = "There is no profile for this user";
+      console.log(err);
+      res.status(404).json({ msg: "error", errors, isValid: false });
+    });
 });
 
 // @route   POST api/pofile
