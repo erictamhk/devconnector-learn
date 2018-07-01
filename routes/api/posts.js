@@ -86,6 +86,8 @@ router.delete(
     Profile.findOne({ user: req.user.id }).then(profile => {
       Post.findById(req.params.id)
         .then(post => {
+          if (post == null) throw "No post found with that ID.";
+
           // Check for post owner
           if (post.user.toString() != req.user.id) {
             errors.notauthorized = "User not authorized.";
@@ -97,6 +99,43 @@ router.delete(
 
           // Delete
           post.remove().then(() => res.json({ success: true }));
+        })
+        .catch(err => {
+          errors.postnotfound = "No post found with that ID.";
+          console.log(err);
+          res.status(404).json({ msg: "error", errors, isValid: false });
+        });
+    });
+  }
+);
+
+// @route   POST api/posts/like/:id
+// @desc    Like post
+// @access  Private
+router.post(
+  "/like/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      Post.findById(req.params.id)
+        .then(post => {
+          if (post == null) throw "No post found with that ID.";
+
+          if (
+            post.likes.filter(like => like.user.toString() === req.user.id)
+              .length > 0
+          ) {
+            errors.alreadyliked = "User already liked this post";
+            console.log(errors);
+            return res
+              .status(400)
+              .json({ msg: "error", errors, isValid: false });
+          }
+
+          // Add user id to likes array
+          post.likes.unshift({ user: req.user.id });
+          post.save().then(post => res.json(post));
         })
         .catch(err => {
           errors.postnotfound = "No post found with that ID.";
