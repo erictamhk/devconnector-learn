@@ -12,7 +12,7 @@ const Post = require("../../models/Post");
 const Profile = require("../../models/Profile");
 
 // Load User model
-const User = require("../../models/User");
+//const User = require("../../models/User");
 
 // @route   GET api/post/test
 // @desc    Tests post route
@@ -179,6 +179,46 @@ router.post(
           post.likes.splice(removeIndex, 1);
 
           // Save
+          post.save().then(post => res.json(post));
+        })
+        .catch(err => {
+          errors.postnotfound = "No post found with that ID.";
+          console.log(err);
+          res.status(404).json({ msg: "error", errors, isValid: false });
+        });
+    });
+  }
+);
+
+// @route   POST api/posts/comment/:id
+// @desc    Add comment to post
+// @access  Private
+router.post(
+  "/comment/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validatePostInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      return res.status(400).json({ msg: "error", errors, isValid });
+    }
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      Post.findById(req.params.id)
+        .then(post => {
+          if (post == null) throw "No post found with that ID.";
+
+          const newComment = {
+            text: req.body.text,
+            name: req.body.name,
+            avatar: req.body.avatar,
+            user: req.user.id
+          };
+
+          // Add to comments array
+          post.comments.unshift(newComment);
+
+          //Save
           post.save().then(post => res.json(post));
         })
         .catch(err => {
