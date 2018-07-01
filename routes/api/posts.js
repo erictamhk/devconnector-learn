@@ -230,4 +230,62 @@ router.post(
   }
 );
 
+// @route   DELETE api/posts/comment/:id/:comment_id
+// @desc    Remove comment from post
+// @access  Private
+router.delete(
+  "/comment/:id/:comment_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      Post.findById(req.params.id)
+        .then(post => {
+          if (post == null) throw "No post found with that ID.";
+
+          if (
+            post.comments.filter(
+              comment => comment._id.toString() === req.params.comment_id
+            ).length === 0
+          ) {
+            errors.commentnotfound = "Comment not found";
+            console.log(errors);
+            return res
+              .status(404)
+              .json({ msg: "error", errors, isValid: false });
+          }
+
+          if (
+            post.comments.filter(
+              comment => comment.user.toString() === req.user.id
+            ).length === 0 &&
+            post.user.toString() != req.user.id
+          ) {
+            errors.notauthorized = "User not authorized.";
+            console.log("Unauthorized request for delete comment!");
+            return res
+              .status(401)
+              .json({ msg: "error", errors, isValid: false });
+          }
+
+          // Get remove index
+          const removeIndex = post.comments
+            .map(item => item._id.toString())
+            .indexOf(req.params.comment_id);
+
+          // Splice comment out of array
+          post.comments.splice(removeIndex, 1);
+
+          // Save
+          post.save().then(post => res.json(post));
+        })
+        .catch(err => {
+          errors.postnotfound = "No post found with that ID.";
+          console.log(err);
+          res.status(404).json({ msg: "error", errors, isValid: false });
+        });
+    });
+  }
+);
+
 module.exports = router;
