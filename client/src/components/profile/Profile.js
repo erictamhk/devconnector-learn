@@ -16,6 +16,7 @@ class Profile extends Component {
     }
   }
   render() {
+    const { profile, loading } = this.props.profile;
     return (
       <div>
         <ProfileHeader />
