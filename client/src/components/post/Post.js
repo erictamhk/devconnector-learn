@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import PostItem from "../posts/PostItem";
-import CommentForm from "./commentForm";
+import CommentForm from "./CommentForm";
 import Spinner from "../common/Spinner";
 import { getPost } from "../../action/postActions";
 import { Link } from "react-router-dom";
