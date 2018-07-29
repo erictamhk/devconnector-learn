@@ -1,5 +1,5 @@
-module.exports = {
-  mongoURI:
-    "mongodb://DevConn:DevConn2018@ds029837.mlab.com:29837/devconnector",
-  secretOrKey: "checksecret"
-};
+if (process.env.NODE_ENV === "production") {
+  module.exports = require("./keys_prod");
+} else {
+  module.exports = require("./keys_dev");
+}
